@@ -1,0 +1,13 @@
+**/.git/
+assets/
+configs/
+out/
+
+.dockerignore
+.gitattributes
+.gitignore
+.gitmodules
+Dockerfile
+docker-compose.yml
+LICENSE
+README.md

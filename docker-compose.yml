@@ -1,0 +1,22 @@
+configs:
+  sources:
+    file: './configs/debian.sources'
+name: 'mi9t-kernel'
+services:
+  build:
+    build:
+      additional_contexts:
+        assets: './assets'
+        configs: './configs'
+      context: '.'
+      target: 'source'
+    configs:
+      - source: 'sources'
+        target: '/etc/apt/sources.list.d/debian.sources'
+    init: true
+    # network_mode: 'none'
+    volumes:
+      - source: './out'
+        target: '/home/build/out'
+        type: 'bind'
+    # user: 'root'

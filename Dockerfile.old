@@ -1,0 +1,77 @@
+# syntax=docker/dockerfile:1
+
+FROM debian:trixie AS base
+
+RUN useradd --create-home --shell /bin/bash --uid 1000 --user-group build
+
+RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources.list.d/debian.sources \
+	--mount=type=cache,target=/var/cache/apt,sharing=private \
+	--mount=type=cache,target=/var/lib/apt,sharing=private \
+	apt update
+
+RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources.list.d/debian.sources \
+	--mount=type=cache,target=/var/cache/apt,sharing=private \
+	--mount=type=cache,target=/var/lib/apt,sharing=private \
+	apt --assume-yes install --no-install-recommends \
+		autoconf \
+		automake \
+		bc \
+		binutils \
+		build-essential \
+		btrfs-progs \
+		e2fsprogs \
+		gcc \
+		grub2-common \
+		iptables \
+		jfsutils \
+		kmod \
+		libbsd-dev \
+		libncurses-dev \
+		libtool-bin \
+		linuxdoc-tools \
+		make \
+		nfs-common \
+		openssl \
+		pcmciautils \
+		ppp \
+		procps \
+		python3-sphinx \
+		quota \
+		reiserfsprogs \
+		squashfs-tools \
+		tcl-dev \
+		texinfo \
+		udev \
+		util-linux \
+		xfsprogs
+
+RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources.list.d/debian.sources \
+	--mount=type=cache,target=/var/cache/apt,sharing=private \
+	--mount=type=cache,target=/var/lib/apt,sharing=private \
+	apt --assume-yes upgrade
+
+FROM base AS dependency
+
+WORKDIR /root
+
+RUN --mount=type=bind,from=assets,source=isdn4k-utils.tar.bz2,target=/root/isdn4k-utils.tar.bz2 \
+	tar --extract --file isdn4k-utils.tar.bz2
+
+COPY --from=configs --link ./isdn4k-utils.config ./isdn4k-utils/.config
+
+FROM base AS source
+
+ENV OUT="/home/build/out"
+ENV PATH="/home/build/src/clang/bin:/home/build/src/gcc/aarch64/bin:/home/build/src/gcc/arm/bin:$PATH"
+
+RUN chown --recursive build:build /home/build
+
+USER build:build
+
+WORKDIR /home/build
+
+RUN mkdir ./out
+
+COPY --chown=build:build --link ./ ./src/
+
+VOLUME /home/build/out
