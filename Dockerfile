@@ -5,20 +5,22 @@ FROM debian:trixie AS base
 RUN useradd --create-home --shell /bin/bash --uid 1000 --user-group build
 
 RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources.list.d/debian.sources \
-	--mount=type=cache,target=/var/cache/apt,sharing=private \
-	--mount=type=cache,target=/var/lib/apt,sharing=private \
+	--mount=type=cache,target=/var/cache/apt,sharing=locked \
+	--mount=type=cache,target=/var/lib/apt,sharing=locked \
 	apt update
 
 RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources.list.d/debian.sources \
-	--mount=type=cache,target=/var/cache/apt,sharing=private \
-	--mount=type=cache,target=/var/lib/apt,sharing=private \
+	--mount=type=cache,target=/var/cache/apt,sharing=locked \
+	--mount=type=cache,target=/var/lib/apt,sharing=locked \
 	apt --assume-yes install --no-install-recommends \
+		adb \
 		android-sdk \
 		bc \
 		bison \
 		build-essential \
 		ccache \
 		curl \
+		fastboot \
 		flex \
 		g++-multilib \
 		gcc-multilib \
@@ -51,18 +53,34 @@ RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources
 		zlib1g-dev
 
 RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources.list.d/debian.sources \
-	--mount=type=cache,target=/var/cache/apt,sharing=private \
-	--mount=type=cache,target=/var/lib/apt,sharing=private \
+	--mount=type=cache,target=/var/cache/apt,sharing=locked \
+	--mount=type=cache,target=/var/lib/apt,sharing=locked \
 	apt --assume-yes upgrade
+
+RUN git lfs install --system
 
 FROM base AS source
 
-RUN chown --recursive build:build /home/build
+ARG NAME="Andrius Andrikonis"
+ARG EMAIL="andrikonis.andrius@gmail.com"
+
+ENV OUT="/home/build/out"
+ENV USE_CCACHE="1"
 
 USER build:build
 
 WORKDIR /home/build
 
-RUN mkdir ./out
+RUN git config --global user.email "$EMAIL"
+RUN git config --global user.name "$NAME"
 
-VOLUME /home/build/out
+RUN mkdir ./src
+
+RUN chown --recursive build:build ./src
+
+WORKDIR /home/build/src
+
+RUN repo init --git-lfs --manifest-branch lineage-23.2 --no-clone-bundle https://github.com/LineageOS/android.git
+
+VOLUME /home/build/src/out
+VOLUME /home/build/src

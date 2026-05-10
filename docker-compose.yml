@@ -1,6 +1,8 @@
 configs:
-  sources:
+  apt_sources:
     file: './configs/debian.sources'
+  ccache:
+    file: './configs/ccache.conf'
 name: 'mi9t-kernel'
 services:
   build:
@@ -11,12 +13,21 @@ services:
       context: '.'
       target: 'source'
     configs:
-      - source: 'sources'
+      - source: 'apt_sources'
         target: '/etc/apt/sources.list.d/debian.sources'
+      - source: 'ccache'
+        target: '/etc/ccache.conf'
+    environment:
+      ANDROID_ADB_SERVER_ADDRESS: 'host.docker.internal'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
     init: true
-    # network_mode: 'none'
     volumes:
       - source: './out'
-        target: '/home/build/out'
+        target: '/home/build/src/out'
         type: 'bind'
-    # user: 'root'
+      - source: 'src'
+        target: '/home/build/src'
+        type: 'volume'
+volumes:
+  src:
