@@ -15,9 +15,12 @@ make bootimage
 ```
 
 ```
-find . -name 'BoardConfigCommon.mk
+find . -name 'BoardConfigCommon.mk'
 cat ./device/xiaomi/sm6150-common/BoardConfigCommon.mk | grep -i target_kernel_config
 find . -path '*/vendor/*' -name 'sdmsteppe-perf_defconfig'
+make ARCH=arm64 vendor/sdmsteppe-perf_defconfig
+make ARCH=arm64 menuconfig
+make ARCH=arm64 savedefconfig
 ```
 
 ---
