@@ -14,6 +14,12 @@ croot
 make bootimage
 ```
 
+```
+find . -name 'BoardConfigCommon.mk
+cat ./device/xiaomi/sm6150-common/BoardConfigCommon.mk | grep -i target_kernel_config
+find . -path '*/vendor/*' -name 'sdmsteppe-perf_defconfig'
+```
+
 ---
 
 # Android (LineageOS) compilation environment

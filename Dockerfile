@@ -22,27 +22,28 @@ RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources
 		curl \
 		fastboot \
 		flex \
-		g++-multilib \
 		gcc-multilib \
 		git \
 		git-lfs \
+		g++-multilib \
 		gnupg \
 		gperf \
 		imagemagick \
-		protobuf-compiler \
-		python3-protobuf \
+		less \
 		lib32readline-dev \
 		lib32z1-dev \
 		libdw-dev \
 		libelf-dev \
 		libgnutls28-dev \
-		lz4 \
 		libsdl1.2-dev \
 		libssl-dev \
 		libxml2 \
 		libxml2-utils \
+		lz4 \
 		lzop \
 		pngcrush \
+		protobuf-compiler \
+		python3-protobuf \
 		repo \
 		rsync \
 		schedtool \
