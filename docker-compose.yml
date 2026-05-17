@@ -3,6 +3,10 @@ configs:
     file: './configs/debian.sources'
   ccache:
     file: './configs/ccache.conf'
+  patch_core:
+    file: './configs/core.patch'
+  patch_kernel:
+    file: './configs/kernel.patch'
 name: 'mi9t-kernel'
 services:
   build:
@@ -17,12 +21,17 @@ services:
         target: '/etc/apt/sources.list.d/debian.sources'
       - source: 'ccache'
         target: '/etc/ccache.conf'
+      - source: 'patch_core'
+        target: '/home/build/core.patch'
+      - source: 'patch_kernel'
+        target: '/home/build/kernel.patch'
     environment:
       ANDROID_ADB_SERVER_ADDRESS: 'host.docker.internal'
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     init: true
     volumes:
+      - './out:/home/build/out'
       - 'src:/home/build/src'
 volumes:
   src:

@@ -74,12 +74,13 @@ WORKDIR /home/build
 RUN git config --global user.email "$EMAIL"
 RUN git config --global user.name "$NAME"
 
-RUN mkdir ./src
+RUN mkdir ./out ./src
 
-RUN chown --recursive build:build ./src
+RUN chown --recursive build:build ./out ./src
 
 WORKDIR /home/build/src
 
 RUN repo init --git-lfs --manifest-branch lineage-23.2 --no-clone-bundle https://github.com/LineageOS/android.git
 
+VOLUME /home/build/out
 VOLUME /home/build/src

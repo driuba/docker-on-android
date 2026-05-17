@@ -1,0 +1,157 @@
+diff --git a/libprocessgroup/profiles/cgroups.json b/libprocessgroup/profiles/cgroups.json
+index e9345a531..2c42f6ebd 100644
+--- a/libprocessgroup/profiles/cgroups.json
++++ b/libprocessgroup/profiles/cgroups.json
+@@ -1,44 +1,35 @@
+ {
+-  "Cgroups": [
+-    {
+-      "Controller": "blkio",
+-      "Path": "/dev/blkio",
+-      "Mode": "0775",
+-      "UID": "system",
+-      "GID": "system"
+-    },
+-    {
+-      "Controller": "cpu",
+-      "Path": "/dev/cpuctl",
+-      "Mode": "0755",
+-      "UID": "system",
+-      "GID": "system"
+-    },
+-    {
+-      "Controller": "cpuset",
+-      "Path": "/dev/cpuset",
+-      "Mode": "0755",
+-      "UID": "system",
+-      "GID": "system"
+-    }
+-  ],
+   "Cgroups2": {
+-    "Path": "/sys/fs/cgroup",
+-    "Mode": "0775",
+-    "UID": "system",
+-    "GID": "system",
+     "Controllers": [
++      {
++        "Controller": "io",
++        "Path": "."
++      },
++      {
++        "Controller": "cpu",
++        "Mode": "0755",
++        "Path": "."
++      },
++      {
++        "Controller": "cpuset",
++        "Mode": "0755",
++        "Path": "."
++      },
+       {
+         "Controller": "freezer",
+         "Path": "."
+       },
+       {
+         "Controller": "memory",
+-        "Path": ".",
+-        "NeedsActivation": true,
+         "MaxActivationDepth": 3,
+-        "Optional": true
++        "NeedsActivation": true,
++        "Optional": true,
++        "Path": "."
+       }
+-    ]
++    ],
++    "GID": "system",
++    "Mode": "0775",
++    "Path": "/sys/fs/cgroup",
++    "UID": "system"
+   }
+ }
+diff --git a/libprocessgroup/profiles/cgroups_28.json b/libprocessgroup/profiles/cgroups_28.json
+index 17d492949..3f364ea3a 100644
+--- a/libprocessgroup/profiles/cgroups_28.json
++++ b/libprocessgroup/profiles/cgroups_28.json
+@@ -1,11 +1,14 @@
+ {
+-  "Cgroups": [
+-    {
+-      "Controller": "schedtune",
+-      "Path": "/dev/stune",
+-      "Mode": "0755",
+-      "UID": "system",
+-      "GID": "system"
+-    }
+-  ]
++  "Cgroups2": {
++    "Controllers": [
++      {
++        "Controller": "schedtune",
++        "Path": "."
++      }
++    ],
++    "GID": "system",
++    "Mode": "0755",
++    "Path": "/sys/fs/cgroup",
++    "UID": "system"
++  }
+ }
+diff --git a/libprocessgroup/profiles/cgroups_29.json b/libprocessgroup/profiles/cgroups_29.json
+index 17d492949..3f364ea3a 100644
+--- a/libprocessgroup/profiles/cgroups_29.json
++++ b/libprocessgroup/profiles/cgroups_29.json
+@@ -1,11 +1,14 @@
+ {
+-  "Cgroups": [
+-    {
+-      "Controller": "schedtune",
+-      "Path": "/dev/stune",
+-      "Mode": "0755",
+-      "UID": "system",
+-      "GID": "system"
+-    }
+-  ]
++  "Cgroups2": {
++    "Controllers": [
++      {
++        "Controller": "schedtune",
++        "Path": "."
++      }
++    ],
++    "GID": "system",
++    "Mode": "0755",
++    "Path": "/sys/fs/cgroup",
++    "UID": "system"
++  }
+ }
+diff --git a/libprocessgroup/profiles/cgroups_30.json b/libprocessgroup/profiles/cgroups_30.json
+index 80a074bf1..2f1b164e6 100644
+--- a/libprocessgroup/profiles/cgroups_30.json
++++ b/libprocessgroup/profiles/cgroups_30.json
+@@ -1,12 +1,15 @@
+ {
+-  "Cgroups": [
+-    {
+-      "Controller": "schedtune",
+-      "Path": "/dev/stune",
+-      "Mode": "0755",
+-      "UID": "system",
+-      "GID": "system",
+-      "Optional": true
+-    }
+-  ]
++  "Cgroups2": {
++    "Controllers": [
++      {
++        "Controller": "schedtune",
++        "Optional": true,
++        "Path": "."
++      }
++    ],
++    "GID": "system",
++    "Mode": "0755",
++    "Path": "/sys/fs/cgroup",
++    "UID": "system"
++  }
+ }
