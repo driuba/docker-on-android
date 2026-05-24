@@ -1,3 +1,6 @@
 [submodule "kernel-xiaomi-davinci"]
 	path = kernel-xiaomi-davinci
 	url = ssh://git@codeberg.org/driuba/kernel-xiaomi-davinci.git
+[submodule "xiaomi-davinci"]
+	path = xiaomi-davinci
+	url = ssh://git@codeberg.org/driuba/xiaomi-davinci.git
