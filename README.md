@@ -23,6 +23,13 @@ make ARCH=arm64 menuconfig
 make ARCH=arm64 savedefconfig
 ```
 
+Relevant configs:  
+```
+ARCH=arm64
+vendor/sdmsteppe-perf_defconfig
+vendor/davinci.config
+```
+
 ---
 
 # Android (LineageOS) compilation environment

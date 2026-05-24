@@ -4,6 +4,8 @@ FROM debian:trixie AS base
 
 RUN useradd --create-home --shell /bin/bash --uid 1000 --user-group build
 
+RUN dpkg --add-architecture i386
+
 RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources.list.d/debian.sources \
 	--mount=type=cache,target=/var/cache/apt,sharing=locked \
 	--mount=type=cache,target=/var/lib/apt,sharing=locked \
@@ -13,14 +15,14 @@ RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources
 	--mount=type=cache,target=/var/cache/apt,sharing=locked \
 	--mount=type=cache,target=/var/lib/apt,sharing=locked \
 	apt --assume-yes install --no-install-recommends \
-		adb \
-		android-sdk \
 		bc \
 		bison \
 		build-essential \
+		bzr \
+		ca-certificates \
 		ccache \
+		cpio \
 		curl \
-		fastboot \
 		flex \
 		gcc-multilib \
 		git \
@@ -29,29 +31,37 @@ RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources
 		gnupg \
 		gperf \
 		imagemagick \
+		img2simg \
+		jq \
+		kmod \
 		less \
-		lib32readline-dev \
-		lib32z1-dev \
-		libdw-dev \
-		libelf-dev \
-		libgnutls28-dev \
-		libsdl1.2-dev \
+		libc6-dev \
+		libgl1-mesa-dev \
+		libgl1-mesa-glx:i386 \
+		liblz4-tool \
+		libncurses5 \
+		libncurses5-dev:i386 \
+		libreadline6-dev:i386 \
 		libssl-dev \
-		libxml2 \
+		libtinfo5 \
+		libx11-dev:i386 \
 		libxml2-utils \
-		lz4 \
 		lzop \
-		pngcrush \
-		protobuf-compiler \
-		python3-protobuf \
+		mingw-w64-i686-dev \
+		python2 \
+		python-markdown \
 		repo \
 		rsync \
 		schedtool \
-		squashfs-tools \
+		sudo \
+		tofrodos \
+		unzip \
+		wget \
+		x11proto-core-dev \
 		xsltproc \
-		xxd \
+		xz-utils \
 		zip \
-		zlib1g-dev
+		zlib1g-dev:i386
 
 RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources.list.d/debian.sources \
 	--mount=type=cache,target=/var/cache/apt,sharing=locked \
