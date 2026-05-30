@@ -15,6 +15,7 @@ RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources
 	--mount=type=cache,target=/var/cache/apt,sharing=locked \
 	--mount=type=cache,target=/var/lib/apt,sharing=locked \
 	apt --assume-yes install --no-install-recommends \
+		android-sdk-libsparse-utils \
 		bc \
 		bison \
 		build-essential \
@@ -24,32 +25,30 @@ RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources
 		cpio \
 		curl \
 		flex \
+		g++-multilib \
 		gcc-multilib \
 		git \
 		git-lfs \
-		g++-multilib \
 		gnupg \
 		gperf \
 		imagemagick \
-		img2simg \
 		jq \
 		kmod \
 		less \
 		libc6-dev \
 		libgl1-mesa-dev \
-		libgl1-mesa-glx:i386 \
-		liblz4-tool \
-		libncurses5 \
-		libncurses5-dev:i386 \
+		libgl1:i386 \
+		libncurses-dev:i386 \
+		libncurses6 \
 		libreadline6-dev:i386 \
 		libssl-dev \
-		libtinfo5 \
+		libtinfo6 \
 		libx11-dev:i386 \
 		libxml2-utils \
+		lz4 \
 		lzop \
 		mingw-w64-i686-dev \
-		python2 \
-		python-markdown \
+		python-markdown-doc \
 		repo \
 		rsync \
 		schedtool \
@@ -88,9 +87,11 @@ RUN mkdir ./out ./src
 
 RUN chown --recursive build:build ./out ./src
 
-WORKDIR /home/build/src
+COPY --chown=build:build --link ./ ./src/
 
-RUN repo init --git-lfs --manifest-branch lineage-23.2 --no-clone-bundle https://github.com/LineageOS/android.git
+WORKDIR /home/build/src/device
+
+RUN ../build/build.sh -c
 
 VOLUME /home/build/out
 VOLUME /home/build/src

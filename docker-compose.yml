@@ -3,12 +3,11 @@ configs:
     file: './configs/debian.sources'
   ccache:
     file: './configs/ccache.conf'
-name: 'mi9t-kernel'
+name: 'docker-on-android'
 services:
   build:
     build:
       additional_contexts:
-        assets: './assets'
         configs: './configs'
       context: '.'
       target: 'source'
@@ -22,6 +21,7 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     init: true
+    network_mode: 'none'
     volumes:
       - './out:/home/build/out'
       - 'src:/home/build/src'
