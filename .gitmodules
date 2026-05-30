@@ -1,6 +1,9 @@
 [submodule "kernel-xiaomi-davinci"]
-	path = kernel-xiaomi-davinci
+	path = kernel
 	url = ssh://git@codeberg.org/driuba/kernel-xiaomi-davinci.git
 [submodule "xiaomi-davinci"]
-	path = xiaomi-davinci
+	path = device
 	url = ssh://git@codeberg.org/driuba/xiaomi-davinci.git
+[submodule "build-tools"]
+	path = build
+	url = git@gitlab.com:ubports/porting/community-ports/halium-generic-adaptation-build-tools.git
