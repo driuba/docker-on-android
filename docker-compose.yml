@@ -24,6 +24,3 @@ services:
     network_mode: 'none'
     volumes:
       - './out:/home/build/out'
-      - 'src:/home/build/src'
-volumes:
-  src:

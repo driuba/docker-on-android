@@ -2,6 +2,8 @@
 
 FROM debian:trixie AS base
 
+ENV USE_CCACHE="1"
+
 RUN useradd --create-home --shell /bin/bash --uid 1000 --user-group build
 
 RUN dpkg --add-architecture i386
@@ -15,52 +17,53 @@ RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources
 	--mount=type=cache,target=/var/cache/apt,sharing=locked \
 	--mount=type=cache,target=/var/lib/apt,sharing=locked \
 	apt --assume-yes install --no-install-recommends \
-		android-sdk-libsparse-utils \
+		adb \
+		android-sdk \
 		bc \
 		bison \
 		build-essential \
-		bzr \
-		ca-certificates \
 		ccache \
-		cpio \
 		curl \
+		fastboot \
 		flex \
-		g++-multilib \
 		gcc-multilib \
 		git \
 		git-lfs \
+		g++-multilib \
 		gnupg \
 		gperf \
 		imagemagick \
-		jq \
-		kmod \
 		less \
-		libc6-dev \
-		libgl1-mesa-dev \
-		libgl1:i386 \
-		libncurses-dev:i386 \
-		libncurses6 \
-		libreadline6-dev:i386 \
+		lib32readline-dev \
+		lib32z1-dev \
+		libbz2-dev \
+		libdw-dev \
+		libelf-dev \
+		libffi-dev \
+		libgnutls28-dev \
+		liblzma-dev \
+		libncursesw5-dev \
+		libreadline-dev \
+		libsdl1.2-dev \
+		libsqlite3-dev \
 		libssl-dev \
-		libtinfo6 \
-		libx11-dev:i386 \
+		libxml2 \
 		libxml2-utils \
 		lz4 \
 		lzop \
-		mingw-w64-i686-dev \
-		python-markdown-doc \
+		pngcrush \
+		protobuf-compiler \
+		python3-protobuf \
 		repo \
 		rsync \
 		schedtool \
-		sudo \
-		tofrodos \
-		unzip \
-		wget \
-		x11proto-core-dev \
+		squashfs-tools \
+		tk-dev \
 		xsltproc \
+		xxd \
 		xz-utils \
 		zip \
-		zlib1g-dev:i386
+		zlib1g-dev
 
 RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources.list.d/debian.sources \
 	--mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -69,12 +72,24 @@ RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources
 
 RUN git lfs install --system
 
-FROM base AS source
+FROM base AS dependencies
+
+ADD --link --unpack=true https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tar.xz /tmp/
+
+WORKDIR /tmp/Python-2.7.18
+
+RUN ./configure --enable-optimizations CFLAGS="-std=c11"
+RUN make
+RUN make install
+
+WORKDIR /
+
+RUN rm -fr /tmp/Python-2.7.18
+
+FROM dependencies AS tooling
 
 ARG NAME="Andrius Andrikonis"
 ARG EMAIL="andrikonis.andrius@gmail.com"
-
-ENV USE_CCACHE="1"
 
 USER build:build
 
@@ -83,15 +98,18 @@ WORKDIR /home/build
 RUN git config --global user.email "$EMAIL"
 RUN git config --global user.name "$NAME"
 
-RUN mkdir ./out ./src
+RUN mkdir --parents ./out ./src/workdir/downloads/kernel-xiaomi-davinci
 
-RUN chown --recursive build:build ./out ./src
+WORKDIR /home/build/src
 
-COPY --chown=build:build --link ./ ./src/
+COPY --chown=build:build --link ./build/ ./build/
 
-WORKDIR /home/build/src/device
+RUN --mount=type=bind,source=./device/deviceinfo,target=deviceinfo \
+	./build/build.sh -c
 
-RUN ../build/build.sh -c
+FROM tooling AS source
+
+COPY --chown=build:build --link ./device/ ./
+COPY --chown=build:build --link ./kernel/ ./workdir/downloads/kernel-xiaomi-davinci/
 
 VOLUME /home/build/out
-VOLUME /home/build/src
