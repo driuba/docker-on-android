@@ -4,8 +4,6 @@ FROM debian:trixie AS base
 
 ENV USE_CCACHE="1"
 
-RUN useradd --create-home --shell /bin/bash --uid 1000 --user-group build
-
 RUN dpkg --add-architecture i386
 
 RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources.list.d/debian.sources \
@@ -24,6 +22,7 @@ RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources
 		build-essential \
 		ccache \
 		curl \
+		fakeroot \
 		fastboot \
 		flex \
 		gcc-multilib \
@@ -58,7 +57,9 @@ RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources
 		rsync \
 		schedtool \
 		squashfs-tools \
+		sudo \
 		tk-dev \
+		wget \
 		xsltproc \
 		xxd \
 		xz-utils \
@@ -71,6 +72,9 @@ RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources
 	apt --assume-yes upgrade
 
 RUN git lfs install --system
+
+RUN useradd --create-home --groups sudo --shell /bin/bash --uid 1000 --user-group build
+RUN sed --expression 's/^%sudo\tALL=(ALL:ALL) ALL$/%sudo\tALL=(ALL:ALL) NOPASSWD:ALL/g' --in-place /etc/sudoers
 
 FROM base AS dependencies
 
@@ -86,30 +90,21 @@ WORKDIR /
 
 RUN rm -fr /tmp/Python-2.7.18
 
-FROM dependencies AS tooling
+FROM dependencies AS source
 
 ARG NAME="Andrius Andrikonis"
 ARG EMAIL="andrikonis.andrius@gmail.com"
 
-USER build:build
-
-WORKDIR /home/build
+USER build
 
 RUN git config --global user.email "$EMAIL"
 RUN git config --global user.name "$NAME"
 
-RUN mkdir --parents ./out ./src/workdir/downloads/kernel-xiaomi-davinci
-
 WORKDIR /home/build/src
 
 COPY --chown=build:build --link ./build/ ./build/
-
-RUN --mount=type=bind,source=./device/deviceinfo,target=deviceinfo \
-	./build/build.sh -c
-
-FROM tooling AS source
-
 COPY --chown=build:build --link ./device/ ./
 COPY --chown=build:build --link ./kernel/ ./workdir/downloads/kernel-xiaomi-davinci/
 
 VOLUME /home/build/out
+VOLUME /home/build/src/workdir
