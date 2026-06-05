@@ -2,7 +2,7 @@
 
 FROM debian:trixie AS base
 
-RUN useradd --create-home --shell /bin/bash --uid 1000 --user-group build
+ENV USE_CCACHE="1"
 
 RUN dpkg --add-architecture i386
 
@@ -15,14 +15,15 @@ RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources
 	--mount=type=cache,target=/var/cache/apt,sharing=locked \
 	--mount=type=cache,target=/var/lib/apt,sharing=locked \
 	apt --assume-yes install --no-install-recommends \
+		adb \
+		android-sdk \
 		bc \
 		bison \
 		build-essential \
-		bzr \
-		ca-certificates \
 		ccache \
-		cpio \
 		curl \
+		fakeroot \
+		fastboot \
 		flex \
 		gcc-multilib \
 		git \
@@ -31,37 +32,39 @@ RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources
 		gnupg \
 		gperf \
 		imagemagick \
-		img2simg \
-		jq \
-		kmod \
 		less \
-		libc6-dev \
-		libgl1-mesa-dev \
-		libgl1-mesa-glx:i386 \
-		liblz4-tool \
-		libncurses5 \
-		libncurses5-dev:i386 \
-		libreadline6-dev:i386 \
+		lib32readline-dev \
+		lib32z1-dev \
+		libbz2-dev \
+		libdw-dev \
+		libelf-dev \
+		libffi-dev \
+		libgnutls28-dev \
+		liblzma-dev \
+		libncursesw5-dev \
+		libreadline-dev \
+		libsdl1.2-dev \
+		libsqlite3-dev \
 		libssl-dev \
-		libtinfo5 \
-		libx11-dev:i386 \
+		libxml2 \
 		libxml2-utils \
+		lz4 \
 		lzop \
-		mingw-w64-i686-dev \
-		python2 \
-		python-markdown \
+		pngcrush \
+		protobuf-compiler \
+		python3-protobuf \
 		repo \
 		rsync \
 		schedtool \
+		squashfs-tools \
 		sudo \
-		tofrodos \
-		unzip \
+		tk-dev \
 		wget \
-		x11proto-core-dev \
 		xsltproc \
+		xxd \
 		xz-utils \
 		zip \
-		zlib1g-dev:i386
+		zlib1g-dev
 
 RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources.list.d/debian.sources \
 	--mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -70,27 +73,38 @@ RUN --mount=type=bind,from=configs,source=debian.sources,target=/etc/apt/sources
 
 RUN git lfs install --system
 
-FROM base AS source
+RUN useradd --create-home --groups sudo --shell /bin/bash --uid 1000 --user-group build
+RUN sed --expression 's/^%sudo\tALL=(ALL:ALL) ALL$/%sudo\tALL=(ALL:ALL) NOPASSWD:ALL/g' --in-place /etc/sudoers
+
+FROM base AS dependencies
+
+ADD --link --unpack=true https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tar.xz /tmp/
+
+WORKDIR /tmp/Python-2.7.18
+
+RUN ./configure --enable-optimizations CFLAGS="-std=c11"
+RUN make
+RUN make install
+
+WORKDIR /
+
+RUN rm -fr /tmp/Python-2.7.18
+
+FROM dependencies AS source
 
 ARG NAME="Andrius Andrikonis"
 ARG EMAIL="andrikonis.andrius@gmail.com"
 
-ENV USE_CCACHE="1"
-
-USER build:build
-
-WORKDIR /home/build
+USER build
 
 RUN git config --global user.email "$EMAIL"
 RUN git config --global user.name "$NAME"
 
-RUN mkdir ./out ./src
-
-RUN chown --recursive build:build ./out ./src
-
 WORKDIR /home/build/src
 
-RUN repo init --git-lfs --manifest-branch lineage-23.2 --no-clone-bundle https://github.com/LineageOS/android.git
+COPY --chown=build:build --link ./build/ ./build/
+COPY --chown=build:build --link ./device/ ./
+COPY --chown=build:build --link ./kernel/ ./workdir/downloads/kernel-xiaomi-davinci/
 
 VOLUME /home/build/out
-VOLUME /home/build/src
+VOLUME /home/build/src/workdir

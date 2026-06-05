@@ -3,10 +3,9 @@ assets/
 configs/
 out/
 
+**/.git*
+
 .dockerignore
-.gitattributes
-.gitignore
-.gitmodules
 Dockerfile
 docker-compose.yml
 LICENSE
