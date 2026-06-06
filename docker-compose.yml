@@ -19,9 +19,6 @@ services:
         target: '/etc/apt/sources.list.d/debian.sources'
       - source: 'ccache'
         target: '/etc/ccache.conf'
-    devices:
-      - '/dev/loop-control:/dev/loop-control'
-      - "${LOOP_DEVICE:-/dev/loop0}:${LOOP_DEVICE:-/dev/loop0}"
     environment:
       ANDROID_ADB_SERVER_ADDRESS: 'host.docker.internal'
     extra_hosts:
