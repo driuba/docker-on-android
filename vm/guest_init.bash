@@ -2,9 +2,10 @@
 
 set -e
 
-mkdir --parents /mnt/source
+mkdir --parents /mnt/source /mnt/out
 
 echo "source /mnt/source virtiofs ro 0 2" >> /etc/fstab
+echo "out /mnt/out virtiofs ro 0 2" >> /etc/fstab
 
 mount --all
 

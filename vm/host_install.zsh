@@ -13,7 +13,8 @@ virt-install \
 	--vcpus "4" \
 	--cpu "host" \
 	--import \
-	--disk "path=$dir/assets/debian-13-nocloud-amd64.qcow2" \
+	--disk "path=$dir/assets/debian-13-nocloud-amd64.qcow2,size=10" \
 	--filesystem "type=mount,driver.type=virtiofs,source=$dir,target=source" \
+	--filesystem "type=mount,driver.type=virtiofs,source=$dir/out,target=out" \
 	--graphics "none" \
 	--boot "uefi"
