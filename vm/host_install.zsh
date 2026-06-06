@@ -2,7 +2,7 @@
 
 set -e
 
-readonly dir="${0:A:h}"
+readonly dir="${0:A:h:h}"
 
 virt-install \
 	--name "xiaomi-davinci-build" \
