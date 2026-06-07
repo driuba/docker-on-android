@@ -76,6 +76,10 @@ apt --assume-yes install --no-install-recommends \
 
 apt --assume-yes upgrade
 
+apt --assume-yes autoremove --purge
+
+apt autoclean
+
 git lfs install --system
 
 reboot

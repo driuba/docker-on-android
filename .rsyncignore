@@ -5,8 +5,6 @@ out/
 
 **/.git*
 
-.dockerignore
-Dockerfile
-docker-compose.yml
+.rsyncignore
 LICENSE
 README.md
